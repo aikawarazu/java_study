@@ -52,6 +52,9 @@ public class ExecutorTest {
     testCompleteService();
   }
 
+  /**
+   * 等待完成线程池，该线程池能按照先后顺序给返回执行结果
+   */
   private static void testCompleteService() throws InterruptedException, ExecutionException {
     ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(3, Integer.MAX_VALUE,
         60L, TimeUnit.SECONDS,
@@ -76,6 +79,9 @@ public class ExecutorTest {
     }
   }
 
+  /**
+   * 单线程池
+   */
   private static void testSingleThreadPool() {
 
     ExecutorService executorService = Executors.newSingleThreadExecutor(new ThreadFactory() {
