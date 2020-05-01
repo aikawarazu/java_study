@@ -1,5 +1,6 @@
 package goodmi.study.multithread.executors;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import java.util.Random;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutionException;
@@ -40,16 +41,37 @@ public class ExecutorTest {
   public static void main(String[] args) throws InterruptedException, ExecutionException {
     // 线程池
 
-    System.out.println("testFixedThreadPool()");
+    System.out.println("==========testFixedThreadPool()");
     testFixedThreadPool();
     Thread.sleep(1000);
 
-    System.out.println("testSingleThreadPool()");
+    System.out.println("==========testThreadPoolRejectPolicy()");
+    testThreadPoolRejectPolicy();
+    Thread.sleep(1000);
+
+    System.out.println("==========testSingleThreadPool()");
     testSingleThreadPool();
 //    System.out.println("testScheduleThreadPool()");
 //    testScheduleThreadPool();
-    System.out.println("testCompleteService()");
+    System.out.println("==========testCompleteService()");
     testCompleteService();
+  }
+
+  private static void testThreadPoolRejectPolicy() {
+    ThreadPoolExecutor executorService = new ThreadPoolExecutor(0, 1, 1L, TimeUnit.SECONDS, new ArrayBlockingQueue<>(1),
+        new ThreadFactoryBuilder().setNameFormat("test_reject-pool-%d").build(), (r, executor) -> {
+      if (!executor.isShutdown()) {
+        r.run();
+      }
+    });
+    executeTask(executorService);
+
+    System.out.println("task put to end ");
+//    Thread.sleep(200);
+    executorService.shutdown();
+    System.out.println("task put ended ");
+
+
   }
 
   /**
@@ -82,7 +104,7 @@ public class ExecutorTest {
   /**
    * 单线程池
    */
-  private static void testSingleThreadPool() {
+  private static void testSingleThreadPool() throws InterruptedException {
 
     ExecutorService executorService = Executors.newSingleThreadExecutor(new ThreadFactory() {
       int i = 0;
@@ -97,7 +119,7 @@ public class ExecutorTest {
     executeTask(executorService);
 
     System.out.println("  task put to end");
-//    Thread.sleep(200);
+    Thread.sleep(500);
     executorService.shutdownNow();
 
     System.out.println("  task put ended ");
@@ -123,9 +145,11 @@ public class ExecutorTest {
     executeTask(executorService::submit);
   }
 
+  // 模拟实际运行内容，sleep 0.1s
   private static void executeTask(Consumer<Runnable> consumer) {
     for (int i2 = 0; i2 < 10; i2++) {
       int finalI = i2;
+      System.out.println("put::::task:" + finalI);
       consumer.accept(() -> {
         try {
           Thread.sleep(100);

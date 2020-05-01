@@ -10,10 +10,13 @@ import java.io.IOException;
 import java.io.PipedReader;
 import java.io.PipedWriter;
 
+/**
+ * 管道流
+ */
 public class CommunicationTest {
 
   public static void main(String[] args) {
-    testConsumer();
+//    testConsumer();
     testPiped();
   }
 
@@ -25,8 +28,8 @@ public class CommunicationTest {
     } catch (IOException e) {
       e.printStackTrace();
     }
-    new PipedSender(pipedWriter).start();
     new PipedReceiver(pipedReader).start();
+    new PipedSender(pipedWriter).start();
   }
 
   private static void testConsumer() {
