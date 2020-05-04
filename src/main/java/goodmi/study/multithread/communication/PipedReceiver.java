@@ -19,7 +19,6 @@ public class PipedReceiver extends Thread {
       int readLen;
       while ((readLen = pipedReader.read(cbuf)) != -1) {
         String x = new String(cbuf, 0, readLen);
-        System.out.println(x);
         System.out.println("received:"+x);
       }
     } catch (IOException e) {

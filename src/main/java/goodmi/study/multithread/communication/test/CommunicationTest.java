@@ -16,10 +16,13 @@ import java.io.PipedWriter;
 public class CommunicationTest {
 
   public static void main(String[] args) {
-//    testConsumer();
     testPiped();
+//    testConsumer();
   }
 
+  /**
+   * 测试使用管道流通信
+   */
   private static void testPiped() {
     PipedReader pipedReader = new PipedReader();
     PipedWriter pipedWriter = new PipedWriter();
@@ -32,6 +35,7 @@ public class CommunicationTest {
     new PipedSender(pipedWriter).start();
   }
 
+  // 生产、消费者模式通信测试
   private static void testConsumer() {
     ProductRepository productRepository = new ProductRepository();
     Consumer consumer = new Consumer(productRepository);

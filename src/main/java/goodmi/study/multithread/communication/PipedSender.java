@@ -2,6 +2,8 @@ package goodmi.study.multithread.communication;
 
 import java.io.IOException;
 import java.io.PipedWriter;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 public class PipedSender extends Thread {
 
@@ -11,21 +13,16 @@ public class PipedSender extends Thread {
     super("Sender");
     this.pipedWriter = pipedWriter;
   }
+  Random random = new Random();
 
   @Override
   public void run() {
     try {
-      StringBuilder stringBuilder = new StringBuilder();
-      for (int i = 0; i < 1000; i++) {
-        String x = String.valueOf(i);
-        stringBuilder.append(x);
-        pipedWriter.write(x);
-        System.out.println("send:"+x);
-      }
-      String str = stringBuilder.toString();
-      System.out.println("str.length():"+str.length());
-      pipedWriter.write(str);
-    } catch (IOException e) {
+      int timeout = random.nextInt(5);
+      TimeUnit.SECONDS.sleep(timeout);
+      pipedWriter.write(timeout+"");
+      System.out.println("send:"+timeout);
+    } catch (IOException | InterruptedException e) {
       e.printStackTrace();
     }finally {
       try {
