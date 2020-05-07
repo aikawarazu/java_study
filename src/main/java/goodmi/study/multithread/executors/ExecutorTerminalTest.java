@@ -80,7 +80,7 @@ public class ExecutorTerminalTest {
         try {
           TimeUnit.SECONDS.sleep(5);
         } catch (InterruptedException e) {
-          System.out.println(Thread.currentThread().getName() + "InterruptedException>>>>");
+          System.err.println(Thread.currentThread().getName() + "InterruptedException>>>>");
         }
         System.out.println(Thread.currentThread().getName() + "task executed");
       }
@@ -93,18 +93,19 @@ public class ExecutorTerminalTest {
    */
   private static void testTerminal(Consumer<ExecutorService> shutdownFunction) throws Exception {
     ExecutorService executorService = Executors.newSingleThreadExecutor();
-    CountDownLatch countDownLatch = new CountDownLatch(1);
-    executorService.submit(() -> {
-      try {
-
-        countDownLatch.countDown();
-        System.out.println("#### Executing:" + Thread.currentThread());
-        TimeUnit.SECONDS.sleep(3);
-        System.out.println("#### Executing Over:" + Thread.currentThread());
-      } catch (InterruptedException e) {
-        e.printStackTrace();
-      }
-    });
+    CountDownLatch countDownLatch = new CountDownLatch(3);
+    for (int i = 0; i < 3; i++) {
+      executorService.submit(() -> {
+        try {
+          countDownLatch.countDown();
+          System.out.println("#### start Executing:" + Thread.currentThread());
+          TimeUnit.SECONDS.sleep(3);
+          System.out.println("#### Executing Over:" + Thread.currentThread());
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
+      });
+    }
     countDownLatch.await();
     System.out.println("before shutdown,isTerminated:" + executorService.isTerminated());
     shutdownFunction.accept(executorService);
